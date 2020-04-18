@@ -10,7 +10,7 @@ function App() {
   return (
     <React.Fragment>
       <ParticlesBG />
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <NavigationBar />
         <Switch>
           <Route exact path="/" component={Layout} />
