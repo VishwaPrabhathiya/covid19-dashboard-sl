@@ -10,7 +10,7 @@ function App() {
   return (
     <React.Fragment>
       <ParticlesBG />
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router basename={"/covid19-dashboard-sl"}>
         <NavigationBar />
         <Switch>
           <Route exact path="/" component={Layout} />
