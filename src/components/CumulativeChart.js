@@ -115,6 +115,7 @@ function CumulativeChart(props) {
       display: false,
     },
     cutoutPercentage: 60,
+    plugins: { datalabels: { display: false } },
   };
 
   return (

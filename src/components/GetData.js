@@ -5,6 +5,7 @@ import LoadingScreen from "./LoadingScreen";
 import Worldstats from "./Worldstats";
 import TableData from "./TableData";
 import Footer from "./Footer";
+import { readRemoteFile } from "react-papaparse";
 
 class GetData extends Component {
   constructor(props) {
@@ -13,7 +14,14 @@ class GetData extends Component {
     this.state = {
       details: [],
       hospitals: [],
+      dDate: [],
+      dTotal: [],
+      dRecover: [],
+      dDeath: [],
+      districtData: [],
       done: undefined,
+      dDone: undefined,
+      disDone: undefined,
     };
   }
 
@@ -31,13 +39,50 @@ class GetData extends Component {
       .catch((error) => {
         console.log(error);
       });
+
+    readRemoteFile(
+      "https://raw.githubusercontent.com/arimacdev/covid19-srilankan-data/master/Daily/covid_lk.csv",
+      {
+        complete: (results) => {
+          // console.log(results.data[0]);
+          this.setState({
+            dDate: results.data[0],
+            dTotal: results.data[1],
+            dDeath: results.data[2],
+            dRecover: results.data[3],
+            dDone: true,
+          });
+        },
+      }
+    );
+
+    readRemoteFile(
+      "https://raw.githubusercontent.com/arimacdev/covid19-srilankan-data/master/Districts/districts_lk.csv",
+      {
+        complete: (results) => {
+          // console.log(results.data);
+          this.setState({
+            districtData: results.data,
+            disDone: true,
+          });
+        },
+      }
+    );
   }
 
   chooseWhatToRender = () => {
-    const { details, hospitals } = this.state;
+    const {
+      details,
+      hospitals,
+      dDate,
+      dTotal,
+      dRecover,
+      dDeath,
+      districtData,
+    } = this.state;
     const name = this.props.name;
 
-    if (!this.state.done) {
+    if (!(this.state.done && this.state.dDone && this.state.disDone)) {
       return <LoadingScreen />;
     } else {
       return (
@@ -47,7 +92,14 @@ class GetData extends Component {
           ) : (
             <Worldstats details={details} />
           )}
-          <TableData hospitals={hospitals} />
+          <TableData
+            hospitals={hospitals}
+            dDate={dDate}
+            dTotal={dTotal}
+            dDeath={dDeath}
+            dRecover={dRecover}
+            districtData={districtData}
+          />
           <Footer />
         </>
       );
