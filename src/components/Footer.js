@@ -8,7 +8,7 @@ const Styles = styled.div`
   padding: 10px;
   position: relative;
   width: 50%;
-  margin: auto;
+  margin: 20px auto auto auto;
   font-size: 10px;
   border-top: white solid 2px;
   .link {

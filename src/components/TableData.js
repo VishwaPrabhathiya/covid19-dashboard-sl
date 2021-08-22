@@ -16,6 +16,9 @@ const Styles = styled.div`
     padding: 5px;
     height: 100%;
   }
+  .col-12 {
+    margin-bottom: 10px;
+  }
 `;
 
 export default class TableData extends Component {
