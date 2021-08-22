@@ -18,11 +18,12 @@
   border-radius: 10px;
 }
 .darkRec hr {
-  border-top: white dotted 5px;
-  width: 50%;
+  border-top: white dotted 3px;
+  width: 30%;
   margin: auto;
 }
 .darkRec p {
+  font-size: smaller;
   color: white;
   padding: 1em 1em 0 1em;
 }

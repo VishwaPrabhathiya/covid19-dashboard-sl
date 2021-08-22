@@ -4,7 +4,7 @@ import TimeCalculate from "./TimeCalculate";
 
 function Cards(props) {
   return (
-    <Card bg={props.background} text="light">
+    <Card bg={props.background} text="light" style={props.backgroundColor ? {backgroundColor: props.backgroundColor} : {backgroundColor: "black"}}>
       <Card.Header>{props.title}</Card.Header>
       <Card.Body>
         <Card.Title>{numberWithCommas(props.amount)}</Card.Title>

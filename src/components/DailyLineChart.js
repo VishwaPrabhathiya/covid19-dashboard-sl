@@ -13,14 +13,6 @@ const Styles = styled.div`
   }
 `;
 
-const takeActive = (dTotal, dRecover, dDeath) => {
-  let dActive = [];
-  for (let num in dTotal) {
-    dActive.push(dTotal[num] - dRecover[num] - dDeath[num]);
-  }
-  return dActive;
-};
-
 class DailyLineChart extends Component {
   constructor(props) {
     super(props);
@@ -35,29 +27,12 @@ class DailyLineChart extends Component {
 
   render() {
     const { dDate, dTotal, dRecover, dDeath } = this.state;
-    const dActive = takeActive(dTotal, dRecover, dDeath);
 
-    const minX = dDate[dDate.length - 27];
     const data = {
       labels: dDate,
       datasets: [
         {
-          label: "Total Cases",
-          fill: false,
-          borderColor: "red",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "red",
-          pointRadius: 2,
-          pointBorderWidth: 1,
-          pointHoverRadius: 6,
-          pointHoverBorderWidth: 2,
-          pointHoverBackgroundColor: "red",
-          pointHoverBorderColor: "#fff",
-          pointHitRadius: 3,
-          data: dTotal,
-        },
-        {
-          label: "Active Cases",
+          label: "Cases",
           fill: false,
           borderColor: "aqua",
           pointBorderColor: "#fff",
@@ -69,10 +44,10 @@ class DailyLineChart extends Component {
           pointHoverBackgroundColor: "aqua",
           pointHoverBorderColor: "#fff",
           pointHitRadius: 3,
-          data: dActive,
+          data: dTotal,
         },
         {
-          label: "Total Recovered",
+          label: "Recoveries",
           fill: false,
           borderColor: "lawngreen",
           pointBorderColor: "#fff",
@@ -86,74 +61,90 @@ class DailyLineChart extends Component {
           pointHitRadius: 3,
           data: dRecover,
         },
+        {
+          label: "Deaths",
+          fill: false,
+          borderColor: "red",
+          pointBorderColor: "#fff",
+          pointBackgroundColor: "red",
+          pointRadius: 2,
+          pointBorderWidth: 1,
+          pointHoverRadius: 6,
+          pointHoverBorderWidth: 2,
+          pointHoverBackgroundColor: "red",
+          pointHoverBorderColor: "#fff",
+          pointHitRadius: 3,
+          data: dDeath,
+        },
       ],
     };
 
     const options = {
-      title: {
-        display: true,
-        text: "Daily Statistics",
-        fontSize: 26,
-        fontFamily: "Arial",
-        fontColor: "#fff",
-      },
       maintainAspectRatio: false,
-      legend: {
-        display: true,
-        labels: {
-          fontColor: "white",
-          usePointStyle: true,
-          fontSize: 13,
-        },
-      },
-      tooltips: {
-        mode: "index",
-        position: "nearest",
-        titleAlign: "center",
-        displayColors: false,
-        titleFontSize: 15,
-        bodyFontSize: 13,
-        titleMarginBottom: 15,
-        bodySpacing: 10,
+      interaction: {
+        intersect: false,
+        mode: 'index',
       },
       scales: {
-        xAxes: [
-          {
-            ticks: {
-              fontColor: "#a9a9a9",
-              min: minX,
-            },
-            type: "time",
-            time: {
-              parser: "M/D/YY",
-              unit: "week",
-              displayFormats: {
-                week: "MMM DD",
-              },
-              tooltipFormat: "MMM DD",
-            },
-            offset: true,
-            gridLines: {
-              display: false,
-              color: "#fff",
-            },
+        x: {
+          ticks: {
+            color: "#a9a9a9",
           },
-        ],
-        yAxes: [
-          {
-            gridLines: {
-              display: true,
-              color: "#fff",
-              borderDash: [10],
-              lineWidth: 0.2,
-            },
-            ticks: {
-              fontColor: "#a9a9a9",
-            },
+          offset: true,
+          grid: {
+            display: false,
+            color: "#fff",
           },
-        ],
+        },
+        y: {
+          grid: {
+            display: true,
+            color: "#fff",
+            borderDash: [10],
+            lineWidth: 0.2,
+          },
+          ticks: {
+            color: "#a9a9a9",
+          },
+        },
       },
-      plugins: { datalabels: { display: false } },
+      plugins: { 
+        datalabels: { 
+          display: false 
+        },
+        title: {
+          display: true,
+          text: "Daily Statistics",
+          font: {
+            size: 26,
+            family: "Arial",
+          },
+          color: "#fff",
+        },
+        legend: {
+          display: true,
+          labels: {
+            color: "white",
+            usePointStyle: true,
+            font: {
+              size: 13,
+            },
+          },
+        },
+        tooltip: {
+          position: "nearest",
+          titleAlign: "center",
+          displayColors: true,
+          titleFont: {
+            size: 15,
+          },
+          bodyFont: {
+            size: 13,
+          },
+          titleMarginBottom: 15,
+          bodySpacing: 10,
+        },
+      },
     };
 
     return (

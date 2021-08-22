@@ -5,101 +5,145 @@ import LoadingScreen from "./LoadingScreen";
 import Worldstats from "./Worldstats";
 import TableData from "./TableData";
 import Footer from "./Footer";
-import { readRemoteFile } from "react-papaparse";
+// import { readRemoteFile } from "react-papaparse";
 
 class GetData extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      details: [],
-      hospitals: [],
+      newDetails: [],
+      oldDetails: [],
       dDate: [],
       dTotal: [],
-      dRecover: [],
       dDeath: [],
-      districtData: [],
+      dRecover: [],
+      testPCRDates: [],
+      testPCR: [],
+      testRapid: [],
       done: undefined,
-      dDone: undefined,
-      disDone: undefined,
+      setupDailyDone: undefined,
+      setupTestsDone: undefined,
     };
   }
 
   componentDidMount() {
-    axios
-      .get("https://hpb.health.gov.lk/api/get-current-statistical")
-      .then((response) => {
-        // console.log(response.data.data);
+    Promise.all([this.getCurrentStatistics(), this.getOldStatistics()])
+      .then((responses) => {
         this.setState({
-          details: response.data.data,
-          hospitals: response.data.data.hospital_data,
+          newDetails: responses[0].data.data,
+          oldDetails: responses[1].data.data,
           done: true,
         });
+        this.setupDailyStats();
+        this.setupTestData();
       })
       .catch((error) => {
         console.log(error);
       });
+  }
 
-    readRemoteFile(
-      "https://raw.githubusercontent.com/arimacdev/covid19-srilankan-data/master/Daily/covid_lk.csv",
-      {
-        complete: (results) => {
-          // console.log(results.data[0]);
-          this.setState({
-            dDate: results.data[0],
-            dTotal: results.data[1],
-            dDeath: results.data[2],
-            dRecover: results.data[3],
-            dDone: true,
-          });
-        },
-      }
-    );
+  getCurrentStatistics = () => {
+    return axios.get("https://hpb.health.gov.lk/api/get-current-statistical");
+  }
 
-    readRemoteFile(
-      "https://raw.githubusercontent.com/arimacdev/covid19-srilankan-data/master/Districts/districts_lk.csv",
-      {
-        complete: (results) => {
-          // console.log(results.data);
-          this.setState({
-            districtData: results.data,
-            disDone: true,
-          });
-        },
-      }
-    );
+  getOldStatistics = () => {
+    return axios.get("https://hpb.health.gov.lk/api/get-statistical-history-data");
+  }
+
+  setupDailyStats = () => {
+    let dDate = [];
+    let dTotal = [];
+    let dDeath = [];
+    let dRecover = [];
+
+    let tempData = this.state.oldDetails.slice(0, 30);
+    tempData.sort((a, b) => {
+      return new Date(a.date) - new Date(b.date);
+    })
+
+    tempData.forEach(element => {
+      dDate.push(element.date);
+      dTotal.push(element.cases_count);
+      dDeath.push(element.deaths_count);
+      dRecover.push(element.recoveries_count);
+    });
+
+    this.setState({
+      dDate: dDate,
+      dTotal: dTotal,
+      dDeath: dDeath,
+      dRecover: dRecover,
+      setupDailyDone: true,
+    });
+  }
+
+  setupTestData = () => {
+    let testPCRDates = [];
+    let testPCR = [];
+    let testRapid = [];
+
+    let tempPCRData = this.state.newDetails.daily_pcr_testing_data.slice(0, 30);
+    tempPCRData.sort((a, b) => {
+      return new Date(a.date) - new Date(b.date);
+    })
+
+    let tempRapidData = this.state.newDetails.daily_antigen_testing_data.slice(0, 30);
+    tempRapidData.sort((a, b) => {
+      return new Date(a.date) - new Date(b.date);
+    })
+
+    tempPCRData.forEach(element => {
+      testPCRDates.push(element.date);
+      testPCR.push(element.pcr_count);
+    });
+    tempRapidData.forEach(element => {
+      testRapid.push(element.antigen_count);
+    });
+
+    this.setState({
+      testPCRDates: testPCRDates,
+      testPCR: testPCR,
+      testRapid: testRapid,
+      setupTestsDone: true,
+    });
   }
 
   chooseWhatToRender = () => {
     const {
-      details,
-      hospitals,
+      newDetails,
+      oldDetails,
       dDate,
       dTotal,
-      dRecover,
       dDeath,
-      districtData,
+      dRecover,
+      testPCRDates,
+      testPCR,
+      testRapid,
     } = this.state;
     const name = this.props.name;
 
-    if (!(this.state.done && this.state.dDone && this.state.disDone)) {
+    // if (!(this.state.done && this.state.dDone && this.state.disDone)) {
+    if (!(this.state.done && this.state.setupDailyDone && this.state.setupTestsDone)) {
       return <LoadingScreen />;
     } else {
       return (
         <>
           {name === "SLstats" ? (
-            <SLstats details={details} />
+            <SLstats details={newDetails} oldDetails={oldDetails} />
           ) : (
-            <Worldstats details={details} />
+            <Worldstats details={newDetails} />
           )}
-          <TableData
-            hospitals={hospitals}
+          <TableData 
+            details={newDetails}
             dDate={dDate}
             dTotal={dTotal}
             dDeath={dDeath}
             dRecover={dRecover}
-            districtData={districtData}
-          />
+            update={newDetails.update_date_time}
+            testPCRDates={testPCRDates}
+            testPCR={testPCR}
+            testRapid={testRapid} />
           <Footer />
         </>
       );

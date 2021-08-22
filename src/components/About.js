@@ -20,11 +20,8 @@ export default function About() {
             <Image src={me} roundedCircle />
             <div className="darkRec">
               <h4>Vishwa Prabhathiya</h4>
-              <p style={{ padding: 0 }}>
-                Undergraduate student at Rajarata University of Sri lanka
-              </p>
               <hr />
-              <p>HTML/CSS | Bootstrap | React | JavaScript</p>
+              <p>Find me on</p>
               <div
                 style={{
                   margin: "auto",

@@ -1,31 +1,15 @@
 import React, { Component } from "react";
-import { Table, Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import styled from "styled-components";
 import TimeCalculate from "./TimeCalculate";
 import CumulativeChart from "./CumulativeChart";
 import DailyLineChart from "./DailyLineChart";
 import DailyNewBarChart from "./DailyNewBarChart";
 import DailyRecoverBar from "./DailyRecoverBar";
-import DistrictBarChart from "./DistrictBarChart";
+import DailyDeathBar from "./DailyDeathBar";
+import DailyTestsBar from "./DailyTestsBar";
 
 const Styles = styled.div`
-  .table-responsive {
-    position: relative;
-    height: 500px;
-    overflow-y: scroll;
-    width: 100%;
-  }
-  .container-fluid {
-    margin-bottom: 50px;
-  }
-  .col-12 {
-    margin-bottom: 10px;
-  }
-  .wrapAll1 {
-    border: 2px solid #176672;
-    border-radius: 20px;
-    padding: 5px;
-  }
   .wrapAll2 {
     border: 2px solid #176672;
     border-radius: 20px;
@@ -39,23 +23,29 @@ export default class TableData extends Component {
     super(props);
 
     this.state = {
-      hospitals: props.hospitals,
       dDate: props.dDate,
+      newDetails:  props.details,
       dTotal: props.dTotal,
       dRecover: props.dRecover,
       dDeath: props.dDeath,
-      districtData: props.districtData,
+      update: props.update,
+      testPCRDates: props.testPCRDates,
+      testPCR: props.testPCR,
+      testRapid: props.testRapid,
     };
   }
 
   render() {
     const {
-      hospitals,
       dDate,
+      newDetails,
       dTotal,
       dRecover,
       dDeath,
-      districtData,
+      update,
+      testPCRDates,
+      testPCR,
+      testRapid
     } = this.state;
 
     return (
@@ -84,6 +74,17 @@ export default class TableData extends Component {
               lg={2}
               style={{ marginBottom: "0px" }}
             ></Col>
+            {/* <Col md={5} sm={12} xs={12} lg={4}>
+              <div className="wrapAll2">
+                <div style={{ textAlign: "center", marginBottom: "0px" }}>
+                  <h3>Total Statistic</h3>
+                  <span>
+                    updated {TimeCalculate(update)} ago
+                  </span>
+                </div>
+                <CumulativeChart newDetails={newDetails} />
+              </div>
+            </Col> */}
           </Row>
           <Row>
             <Col md={4} sm={12} xs={12} lg={4}>
@@ -93,74 +94,31 @@ export default class TableData extends Component {
               <DailyRecoverBar dDate={dDate} dRecover={dRecover} />
             </Col>
             <Col md={4} sm={12} xs={12} lg={4}>
-              <DistrictBarChart districtData={districtData} />
+              <DailyDeathBar dDate={dDate} dDeath={dDeath} />
             </Col>
           </Row>
           <Row>
-            <Col md={7} sm={12} xs={12} lg={8}>
-              <div className="wrapAll1">
-                <div style={{ textAlign: "center" }}>
-                  <h3>Hospital Statistics</h3>
-                  <span>
-                    updated {TimeCalculate(hospitals[0].created_at)} ago
-                  </span>
-                </div>
-
-                <Table responsive striped bordered hover variant="dark">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Hospital Name</th>
-                      <th>Cumulative Total</th>
-                      <th>Cumulative Sri Lankans</th>
-                      <th>Cumulative Foreigns</th>
-                      <th>Total Treatment</th>
-                      <th>Sri Lankans in Treatment</th>
-                      <th>Foreigns in Treatment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {hospitals.length
-                      ? hospitals.map((hospital, id) => {
-                          return (
-                            <tr key={id}>
-                              <td>{hospital.id}</td>
-                              <td>{hospital.hospital.name}</td>
-                              <td>{hospital.cumulative_total}</td>
-                              <td>{hospital.cumulative_local}</td>
-                              <td>{hospital.cumulative_foreign}</td>
-                              <td>{hospital.treatment_total}</td>
-                              <td>{hospital.treatment_local}</td>
-                              <td>{hospital.treatment_foreign}</td>
-                            </tr>
-                          );
-                        })
-                      : null}
-                  </tbody>
-                </Table>
-                <div className="text-muted">
-                  *Cumulative Total: Total number of Sri Lankan & Foreigns who
-                  have been treated /observed for COVID-19 in a given hospital.
-                  *Total Treatment: Total number of Sri Lankans & Foreigns who
-                  are currently on treatment/observation for COVID-19 in a given
-                  hospital
-                </div>
-              </div>
+            <Col
+              md={1}
+              sm={12}
+              xs={12}
+              lg={1}
+              style={{ marginBottom: "0px" }}
+            ></Col>
+            <Col md={10} sm={12} xs={12} lg={10}>
+              <DailyTestsBar
+                testPCRDates={testPCRDates}
+                testPCR={testPCR}
+                testRapid={testRapid}
+              />
             </Col>
-            <Col md={5} sm={12} xs={12} lg={4}>
-              <div className="wrapAll2">
-                <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                  <h3>Sri Lankans in Treatment</h3>
-                  <span>
-                    updated {TimeCalculate(hospitals[0].created_at)} ago
-                  </span>
-                </div>
-                <CumulativeChart hospitals={hospitals} />
-                <div style={{ textAlign: "center" }}>
-                  <span className="text-muted">*Not included Foreigns</span>
-                </div>
-              </div>
-            </Col>
+            <Col
+              md={1}
+              sm={12}
+              xs={12}
+              lg={1}
+              style={{ marginBottom: "0px" }}
+            ></Col>
           </Row>
         </Container>
       </Styles>
