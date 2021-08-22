@@ -14,35 +14,40 @@ const Styles = styled.div`
   }
 `;
 
-const sliceArray = (arrayData) => {
-  return arrayData.slice(arrayData.length-20, arrayData.length);
-};
-
-class DailyNewBarChart extends Component {
+class DailyTestsBar extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dDate: props.dDate,
-      dTotal: props.dTotal,
+      testPCRDates: props.testPCRDates,
+      testPCR: props.testPCR,
+      testRapid: props.testRapid,
     };
   }
 
   render() {
-    const { dDate, dTotal } = this.state;
-    const dNewCases = sliceArray(dTotal);
-    const dNewDates = sliceArray(dDate);
+    const { testPCRDates, testPCR, testRapid } = this.state;
+
     const data = {
-      labels: dNewDates,
+      labels: testPCRDates,
       datasets: [
         {
-          label: "New Cases",
-          backgroundColor: "#17a2b8",
-          borderColor: "#0e6f7e",
-          borderWidth: 2,
-          hoverBackgroundColor: "#64e0f3",
-          hoverBorderColor: "#0e6f7e",
-          data: dNewCases,
+            label: "Daily PCR Tests",
+            backgroundColor: "#156180",
+            borderColor: "#0e5471",
+            borderWidth: 2,
+            hoverBackgroundColor: "#37bcf3",
+            hoverBorderColor: "#0e5471",
+            data: testPCR,
+        },
+        {
+            label: "Daily Rapid Antigen Tests",
+            backgroundColor: "#19ad9b",
+            borderColor: "#108476",
+            borderWidth: 2,
+            hoverBackgroundColor: "#3ae8d3",
+            hoverBorderColor: "#108476",
+            data: testRapid,
         },
       ],
     };
@@ -61,6 +66,8 @@ class DailyNewBarChart extends Component {
           offset: true,
           grid: {
             display: false,
+            color: "#fff",
+            offsetGridLines: true,
           },
         },
         y: {
@@ -81,7 +88,7 @@ class DailyNewBarChart extends Component {
         },
         title: {
           display: true,
-          text: "Daily Cases",
+          text: "Daily Tests",
           font: {
             size: 26,
             family: "Arial",
@@ -89,19 +96,20 @@ class DailyNewBarChart extends Component {
           color: "#fff",
         },
         legend: {
-          display: false,
-          labels: {
-            font: {
-              size: 13,
+            display: true,
+            labels: {
+              color: "white",
+              usePointStyle: true,
+              font: {
+                size: 13,
+              },
             },
-            color: "white",
-            usePointStyle: false,
-          },
         },
         tooltip: {
+          mode: "index",
           position: "nearest",
           titleAlign: "center",
-          displayColors: false,
+          displayColors: true,
           titleFont: {
             size: 15,
           },
@@ -124,4 +132,4 @@ class DailyNewBarChart extends Component {
   }
 }
 
-export default DailyNewBarChart;
+export default DailyTestsBar;

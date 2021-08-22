@@ -23,7 +23,7 @@ function NavigationBar() {
             Home
           </Nav.Link>
           <Nav.Link as={Link} to="/about">
-            About
+            About Me
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>

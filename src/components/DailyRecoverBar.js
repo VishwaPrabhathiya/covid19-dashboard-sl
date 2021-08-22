@@ -14,15 +14,8 @@ const Styles = styled.div`
   }
 `;
 
-const takeNewRecoveries = (dRecover) => {
-  let dNewRecover = [0];
-  let num;
-  for (num = 0; num < dRecover.length; num++) {
-    if (!(num + 1 === dRecover.length)) {
-      dNewRecover.push(dRecover[num + 1] - dRecover[num]);
-    }
-  }
-  return dNewRecover;
+const sliceArray = (arrayData) => {
+  return arrayData.slice(arrayData.length-20, arrayData.length);
 };
 
 class DailyRecoverBar extends Component {
@@ -37,23 +30,17 @@ class DailyRecoverBar extends Component {
 
   render() {
     const { dDate, dRecover } = this.state;
-    const dNewRecover = takeNewRecoveries(dRecover);
-    let maxR = Math.max(...dNewRecover);
-    if (maxR % 3 === 0) {
-      maxR = maxR + 3;
-    } else {
-      maxR = 3 - (maxR % 3) + maxR;
-    }
+    const dNewRecover = sliceArray(dRecover);
+    const dNewDates = sliceArray(dDate);
 
-    const minX = dDate[dDate.length - 27];
     const data = {
-      labels: dDate,
+      labels: dNewDates,
       datasets: [
         {
-          label: "New Recoveries",
+          label: "Daily Recoveries",
           backgroundColor: "#28a745",
           borderColor: "#117428",
-          borderWidth: 1,
+          borderWidth: 2,
           hoverBackgroundColor: "#4fe973",
           hoverBorderColor: "#117428",
           data: dNewRecover,
@@ -62,80 +49,71 @@ class DailyRecoverBar extends Component {
     };
 
     const options = {
-      title: {
-        display: true,
-        text: "Daily New Recoveries",
-        fontSize: 26,
-        fontFamily: "Arial",
-        fontColor: "#fff",
-      },
       maintainAspectRatio: false,
-      legend: {
-        display: false,
-        labels: {
-          fontColor: "white",
-          usePointStyle: false,
-          fontSize: 13,
-        },
-      },
-      tooltips: {
-        mode: "index",
-        position: "nearest",
-        titleAlign: "center",
-        displayColors: false,
-        titleFontSize: 15,
-        bodyFontSize: 13,
-        titleMarginBottom: 15,
-        bodySpacing: 10,
+      interaction: {
+        intersect: false,
+        mode: 'index',
       },
       scales: {
-        xAxes: [
-          {
-            ticks: {
-              fontColor: "#a9a9a9",
-              min: minX,
-            },
-            offset: true,
-            type: "time",
-            time: {
-              parser: "M/D/YY",
-              unit: "week",
-              displayFormats: {
-                week: "MMM DD",
-              },
-              tooltipFormat: "MMM DD",
-            },
-            gridLines: {
-              display: false,
-              color: "#fff",
-              offsetGridLines: true,
-            },
+        x: {
+          ticks: {
+            color: "#a9a9a9",
           },
-        ],
-        yAxes: [
-          {
-            gridLines: {
-              display: true,
-              color: "#fff",
-              borderDash: [10],
-              lineWidth: 0.2,
-            },
-            ticks: {
-              fontColor: "#a9a9a9",
-              min: 0,
-              stepSize: 3,
-              max: maxR,
-            },
+          offset: true,
+          grid: {
+            display: false,
+            color: "#fff",
+            offsetGridLines: true,
           },
-        ],
+        },
+        y: {
+          grid: {
+            display: true,
+            color: "#fff",
+            borderDash: [10],
+            lineWidth: 0.2,
+          },
+          ticks: {
+            color: "#a9a9a9",
+          },
+        },
       },
       plugins: {
         datalabels: {
+          display: false,
+        },
+        title: {
           display: true,
+          text: "Daily Recoveries",
+          font: {
+            size: 26,
+            family: "Arial",
+          },
           color: "#fff",
-          anchor: "end",
-          align: "top",
-          clip: "true",
+        },
+        legend: {
+          display: false,
+          labels: {
+            font: {
+              size: 13,
+            },
+            color: "white",
+            usePointStyle: false,
+          },
+        },
+        tooltip: {
+          mode: "index",
+          position: "nearest",
+          titleAlign: "center",
+          displayColors: false,
+          titleFont: {
+            size: 15,
+          },
+          bodyFont: {
+            size: 13,
+          },
+          titleMarginBottom: 15,
+          bodySpacing: 10,
         },
       },
     };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Doughnut, Chart } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 
 function CumulativeChart(props) {
   const staticColors = [
@@ -50,72 +50,54 @@ function CumulativeChart(props) {
     "#84FFFF",
   ];
 
-  let hospitalTotal = [];
-  let hospitalName = [];
+  let totalValues = [];
+  let totalNames = ['Total Deths', 'Total Recovered', 'Total Active Case'];
 
-  const takeHospitalValues = (hospitals) => {
-    for (let num in hospitals) {
-      hospitalTotal.push(hospitals[num].treatment_local);
-      hospitalName.push(hospitals[num].hospital.name);
-    }
+  const takeTotalValues = (newDetails) => {
+    totalValues.push(newDetails.local_deaths);
+    totalValues.push(newDetails.local_recovered);
+    totalValues.push(newDetails.local_active_cases);
   };
-  takeHospitalValues(props.hospitals);
-
-  const originalDoughnutDraw = Chart.controllers.doughnut.prototype.draw;
-  Chart.helpers.extend(Chart.controllers.doughnut.prototype, {
-    draw() {
-      originalDoughnutDraw.apply(this, arguments);
-
-      const chart = this.chart;
-      const width = chart.width;
-      const height = chart.height;
-      const ctx = chart.ctx;
-
-      const fontSize = (height / 100).toFixed(2);
-      ctx.font = `${fontSize}em Segoe UI`;
-      ctx.textBaseline = "middle";
-
-      let sum = 0;
-      for (let i = 0; i < chart.config.data.datasets[0].data.length; i++) {
-        sum += chart.config.data.datasets[0].data[i];
-      }
-
-      const text = sum;
-      const textX = Math.round((width - ctx.measureText(text).width) / 2);
-      const textY = height / 2;
-
-      ctx.fillText(text, textX, textY);
-    },
-  });
+  takeTotalValues(props.newDetails);
 
   const chartData = {
-    labels: hospitalName,
+    labels: totalNames,
     datasets: [
       {
-        data: hospitalTotal,
-        backgroundColor: staticColors,
+        data: totalValues,
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(75, 192, 192)',
+          'rgb(255, 159, 64)'
+        ],
         borderColor: "#282c34",
-        borderWidth: 8,
+        borderWidth: 4,
         hoverBorderColor: "#fff",
       },
     ],
   };
 
   const options = {
-    title: {
-      display: true,
-      text:
-        "Total number of Sri Lankans who are currently on treatment / observation",
-      fontSize: 20,
-      fontFamily: "sans-serif",
-      position: "bottom",
-      fontColor: "#fff",
+    cutout: "50%",
+    plugins: { 
+      datalabels: { 
+        display: false 
+      },
+      legend: {
+        display: false,
+      },
+      title: {
+        display: false,
+        text:
+          "Total number of Sri Lankans who are currently on treatment / observation",
+        font: {
+          size: 20,
+          family: "sans-serif",
+        },
+        position: "bottom",
+        color: "#fff",
+      },
     },
-    legend: {
-      display: false,
-    },
-    cutoutPercentage: 60,
-    plugins: { datalabels: { display: false } },
   };
 
   return (

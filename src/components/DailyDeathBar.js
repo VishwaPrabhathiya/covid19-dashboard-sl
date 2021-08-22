@@ -18,31 +18,32 @@ const sliceArray = (arrayData) => {
   return arrayData.slice(arrayData.length-20, arrayData.length);
 };
 
-class DailyNewBarChart extends Component {
+class DailyDeathBar extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       dDate: props.dDate,
-      dTotal: props.dTotal,
+      dDeath: props.dDeath,
     };
   }
 
   render() {
-    const { dDate, dTotal } = this.state;
-    const dNewCases = sliceArray(dTotal);
+    const { dDate, dDeath } = this.state;
+    const dNewDeath = sliceArray(dDeath);
     const dNewDates = sliceArray(dDate);
+
     const data = {
       labels: dNewDates,
       datasets: [
         {
-          label: "New Cases",
-          backgroundColor: "#17a2b8",
-          borderColor: "#0e6f7e",
+          label: "Daily Deaths",
+          backgroundColor: "#ae1d13",
+          borderColor: "#7f150d",
           borderWidth: 2,
-          hoverBackgroundColor: "#64e0f3",
-          hoverBorderColor: "#0e6f7e",
-          data: dNewCases,
+          hoverBackgroundColor: "#f86f66",
+          hoverBorderColor: "#7f150d",
+          data: dNewDeath,
         },
       ],
     };
@@ -61,6 +62,8 @@ class DailyNewBarChart extends Component {
           offset: true,
           grid: {
             display: false,
+            color: "#fff",
+            offsetGridLines: true,
           },
         },
         y: {
@@ -81,7 +84,7 @@ class DailyNewBarChart extends Component {
         },
         title: {
           display: true,
-          text: "Daily Cases",
+          text: "Daily Deaths",
           font: {
             size: 26,
             family: "Arial",
@@ -99,6 +102,7 @@ class DailyNewBarChart extends Component {
           },
         },
         tooltip: {
+          mode: "index",
           position: "nearest",
           titleAlign: "center",
           displayColors: false,
@@ -124,4 +128,4 @@ class DailyNewBarChart extends Component {
   }
 }
 
-export default DailyNewBarChart;
+export default DailyDeathBar;
